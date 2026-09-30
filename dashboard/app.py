@@ -29,45 +29,86 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom styling for clean, academic aesthetic
+# Custom styling for high-contrast, crystal-clear light theme aesthetic
 st.markdown(
     """
     <style>
+    /* Global Container Styles */
+    .stApp {
+        background-color: #f8fafc;
+        color: #0f172a;
+    }
+    
+    /* Top Header */
     .main-title {
-        font-size: 2.1rem;
-        font-weight: 700;
-        color: #1e293b;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #0f172a;
         margin-bottom: 0.2rem;
+        letter-spacing: -0.02em;
     }
     .sub-title {
         font-size: 1.05rem;
-        color: #64748b;
+        font-weight: 500;
+        color: #475569;
         margin-bottom: 1.5rem;
     }
+    
+    /* Section Headings */
+    h2, h3, .stHeading {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+    }
+    
+    /* KPI Metric Cards */
     .metric-card {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 1rem;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 1.2rem 1rem;
         text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.15s ease-in-out;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
     .metric-val {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #0f172a;
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #1e3a8a;
+        margin-top: 0.2rem;
     }
     .metric-lbl {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        font-weight: 700;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
     }
-    .formula-box {
-        background-color: #f1f5f9;
-        border-left: 4px solid #3b82f6;
-        padding: 1rem;
-        border-radius: 4px;
-        margin: 1rem 0;
+    
+    /* Highlight Winner Badge */
+    .badge-win {
+        display: inline-block;
+        background-color: #dcfce7;
+        color: #166534;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        margin-left: 0.3rem;
+    }
+    
+    /* Theory Box */
+    .theory-box {
+        background-color: #ffffff;
+        border: 1px solid #bfdbfe;
+        border-left: 5px solid #2563eb;
+        padding: 1.2rem 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06);
     }
     </style>
     """,
@@ -104,7 +145,7 @@ seed_value = st.sidebar.number_input("Seed Value", value=42, step=1, disabled=no
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Advertisement Ground Truth CTRs")
-st.sidebar.caption("These hidden probabilities represent real user click behavior. The UCB agent never sees these directly.")
+st.sidebar.caption("Hidden ground truth click probabilities. The UCB agent never sees these directly.")
 
 # Preset selector
 preset = st.sidebar.selectbox(
@@ -179,7 +220,7 @@ with col2:
     st.markdown(
         f"""<div class="metric-card">
             <div class="metric-lbl">Total Clicks (Reward)</div>
-            <div class="metric-val">{metrics['total_reward']:,}</div>
+            <div class="metric-val" style="color: #2563eb;">{metrics['total_reward']:,}</div>
         </div>""",
         unsafe_allow_html=True,
     )
@@ -195,17 +236,17 @@ with col4:
     st.markdown(
         f"""<div class="metric-card">
             <div class="metric-lbl">Optimal Ad (True)</div>
-            <div class="metric-val">{metrics['best_ad_name']} ({metrics['max_true_ctr']:.2f})</div>
+            <div class="metric-val" style="color: #15803d;">{metrics['best_ad_name']} <span style="font-size:1rem; font-weight:600;">({metrics['max_true_ctr']:.2f})</span></div>
         </div>""",
         unsafe_allow_html=True,
     )
 with col5:
     is_match = metrics['best_ad_name'] == metrics['agent_favorite_name']
-    badge = "✅ Correct" if is_match else "⚠️ In Progress"
+    badge = '<span class="badge-win">✅ Winner</span>' if is_match else '<span style="color:#b45309;">⚠️ Exploring</span>'
     st.markdown(
         f"""<div class="metric-card">
             <div class="metric-lbl">Agent Choice</div>
-            <div class="metric-val">{metrics['agent_favorite_name']} <span style="font-size:0.9rem;">{badge}</span></div>
+            <div class="metric-val" style="color: #1e3a8a;">{metrics['agent_favorite_name']} {badge}</div>
         </div>""",
         unsafe_allow_html=True,
     )
@@ -214,7 +255,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Section 2: Advertisement Performance Table
 st.subheader("2. Advertisement Performance Breakdown")
-st.caption("Comparison between Environment Ground-Truth (hidden during action selection) and UCB Empirical Estimates.")
+st.caption("Comparison between Environment Ground-Truth (hidden from agent during action selection) and UCB Empirical Estimates.")
 
 summary_display = metrics["ad_summary_df"].copy()
 summary_display["True CTR"] = summary_display["True CTR"].map("{:.3f}".format)
@@ -230,6 +271,22 @@ st.dataframe(
     hide_index=True,
 )
 
+# Configure Matplotlib default aesthetic for clean white light backgrounds
+plt.rcParams.update({
+    "figure.facecolor": "#ffffff",
+    "axes.facecolor": "#ffffff",
+    "axes.edgecolor": "#cbd5e1",
+    "axes.labelcolor": "#1e293b",
+    "xtick.color": "#334155",
+    "ytick.color": "#334155",
+    "grid.color": "#e2e8f0",
+    "grid.linestyle": "--",
+    "grid.alpha": 0.8,
+    "font.size": 10,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+})
+
 # Section 3: Learning Curves (Cumulative Reward & Regret)
 st.subheader("3. Learning Performance Dynamics")
 col_plot1, col_plot2 = st.columns(2)
@@ -238,23 +295,25 @@ rounds = df["round"].values
 
 with col_plot1:
     fig1, ax1 = plt.subplots(figsize=(6, 4))
-    ax1.plot(rounds, df["cumulative_reward"].values, color="#2563eb", linewidth=2, label="Cumulative Clicks")
-    ax1.set_title("Cumulative Reward Over Time", fontweight="bold", fontsize=11)
+    ax1.plot(rounds, df["cumulative_reward"].values, color="#2563eb", linewidth=2.2, label="Cumulative Clicks")
+    ax1.set_title("Cumulative Reward Over Time", fontweight="bold", color="#0f172a", pad=10)
     ax1.set_xlabel("Round (t)")
     ax1.set_ylabel("Total Clicks")
-    ax1.grid(True, linestyle="--", alpha=0.5)
-    ax1.legend(loc="upper left")
+    ax1.grid(True)
+    ax1.legend(loc="upper left", frameon=True, facecolor="#ffffff", edgecolor="#cbd5e1")
+    plt.tight_layout()
     st.pyplot(fig1, use_container_width=True)
     plt.close(fig1)
 
 with col_plot2:
     fig2, ax2 = plt.subplots(figsize=(6, 4))
-    ax2.plot(rounds, df["cumulative_expected_regret"].values, color="#dc2626", linewidth=2, label="Cumulative Expected Regret")
-    ax2.set_title("Cumulative Regret Over Time", fontweight="bold", fontsize=11)
+    ax2.plot(rounds, df["cumulative_expected_regret"].values, color="#dc2626", linewidth=2.2, label="Cumulative Expected Regret")
+    ax2.set_title("Cumulative Regret Over Time", fontweight="bold", color="#0f172a", pad=10)
     ax2.set_xlabel("Round (t)")
     ax2.set_ylabel("Regret")
-    ax2.grid(True, linestyle="--", alpha=0.5)
-    ax2.legend(loc="upper left")
+    ax2.grid(True)
+    ax2.legend(loc="upper left", frameon=True, facecolor="#ffffff", edgecolor="#cbd5e1")
+    plt.tight_layout()
     st.pyplot(fig2, use_container_width=True)
     plt.close(fig2)
 
@@ -270,16 +329,25 @@ num_ads = env.num_ads
 
 with col_plot3:
     fig3, ax3 = plt.subplots(figsize=(6, 4))
-    colors = ["#16a34a" if i == np.argmax(true_ctrs) else "#60a5fa" for i in range(num_ads)]
-    bars = ax3.bar(ad_names, counts, color=colors, edgecolor="black", alpha=0.85, width=0.5)
+    colors = ["#16a34a" if i == np.argmax(true_ctrs) else "#3b82f6" for i in range(num_ads)]
+    bars = ax3.bar(ad_names, counts, color=colors, edgecolor="#1e293b", linewidth=0.8, alpha=0.9, width=0.55)
     for bar, count in zip(bars, counts):
         h = bar.get_height()
-        ax3.annotate(f"{count:,}", (bar.get_x() + bar.get_width() / 2, h),
-                     xytext=(0, 3), textcoords="offset points", ha="center", fontsize=8, fontweight="bold")
-    ax3.set_title("Ad Selection Frequency (Exploitation Focus)", fontweight="bold", fontsize=11)
+        ax3.annotate(
+            f"{count:,}",
+            xy=(bar.get_x() + bar.get_width() / 2, h),
+            xytext=(0, 4),
+            textcoords="offset points",
+            ha="center",
+            fontsize=8.5,
+            fontweight="bold",
+            color="#0f172a"
+        )
+    ax3.set_title("Ad Selection Frequency (Exploitation Focus)", fontweight="bold", color="#0f172a", pad=10)
     ax3.set_xlabel("Advertisement")
     ax3.set_ylabel("Impressions (Selections)")
-    ax3.grid(True, axis="y", linestyle="--", alpha=0.5)
+    ax3.grid(True, axis="y")
+    plt.tight_layout()
     st.pyplot(fig3, use_container_width=True)
     plt.close(fig3)
 
@@ -287,15 +355,16 @@ with col_plot4:
     fig4, ax4 = plt.subplots(figsize=(6, 4))
     x_idx = np.arange(num_ads)
     width = 0.35
-    ax4.bar(x_idx - width / 2, true_ctrs, width, label="True CTR (Hidden)", color="#4f46e5", alpha=0.85)
-    ax4.bar(x_idx + width / 2, estimated_ctrs, width, label="Estimated CTR (UCB)", color="#f59e0b", alpha=0.85)
-    ax4.set_title("True CTR vs. Estimated CTR Convergence", fontweight="bold", fontsize=11)
+    ax4.bar(x_idx - width / 2, true_ctrs, width, label="True CTR (Hidden)", color="#4f46e5", alpha=0.9, edgecolor="#1e293b", linewidth=0.8)
+    ax4.bar(x_idx + width / 2, estimated_ctrs, width, label="Estimated CTR (UCB)", color="#f59e0b", alpha=0.9, edgecolor="#1e293b", linewidth=0.8)
+    ax4.set_title("True CTR vs. Estimated CTR Convergence", fontweight="bold", color="#0f172a", pad=10)
     ax4.set_xlabel("Advertisement")
     ax4.set_ylabel("CTR")
     ax4.set_xticks(x_idx)
     ax4.set_xticklabels(ad_names)
-    ax4.legend(loc="upper right")
-    ax4.grid(True, axis="y", linestyle="--", alpha=0.5)
+    ax4.legend(loc="upper right", frameon=True, facecolor="#ffffff", edgecolor="#cbd5e1")
+    ax4.grid(True, axis="y")
+    plt.tight_layout()
     st.pyplot(fig4, use_container_width=True)
     plt.close(fig4)
 
@@ -304,11 +373,14 @@ st.markdown("---")
 st.subheader("5. Theoretical Foundation: Upper Confidence Bound (UCB1)")
 
 st.markdown(
-    r"""
-    The **Upper Confidence Bound (UCB1)** algorithm resolves the exploration-exploitation dilemma by applying the principle of **optimism in the face of uncertainty**.
-    
-    At round $t$, the score for advertisement $i$ is calculated as:
     """
+    <div class="theory-box">
+    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #1e293b; font-weight: 600;">
+    The <strong>Upper Confidence Bound (UCB1)</strong> algorithm resolves the exploration-exploitation dilemma by applying the principle of <em>optimism in the face of uncertainty</em>.
+    </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.latex(r"UCB_i(t) = \hat{\mu}_i + c \sqrt{\frac{\ln(t)}{N_i}}")
@@ -316,11 +388,11 @@ st.latex(r"UCB_i(t) = \hat{\mu}_i + c \sqrt{\frac{\ln(t)}{N_i}}")
 st.markdown(
     r"""
     Where:
-    - **$\hat{\mu}_i$ (Exploitation Term)**: The empirical average reward obtained from advertisement $i$ ($\hat{\mu}_i = \frac{R_i}{N_i}$).
-    - **$c \sqrt{\frac{\ln(t)}{N_i}}$ (Exploration Bonus)**: The upper confidence radius derived from Hoeffding's Inequality representing statistical uncertainty.
-    - **$t$**: Total simulation rounds across all advertisements.
+    - **$\hat{\mu}_i$ (Exploitation Term)**: Empirical average reward obtained from advertisement $i$ ($\hat{\mu}_i = \frac{R_i}{N_i}$).
+    - **$c \sqrt{\frac{\ln(t)}{N_i}}$ (Exploration Bonus)**: Upper confidence radius derived from Hoeffding's Inequality representing statistical uncertainty.
+    - **$t$**: Total simulation rounds completed across all advertisements.
     - **$N_i$**: Total selection count for advertisement $i$.
-    - **$c$**: Configurable exploration coefficient (balances conservatism vs. risk-seeking).
+    - **$c$**: Configurable exploration coefficient (scales confidence interval width).
 
     **Why logarithmic growth $\ln(t)$?**  
     As total time $t$ progresses, $\ln(t)$ increases slowly, ensuring all arms are checked occasionally, but arms with large $N_i$ experience decaying exploration bonus, causing the agent to asymptotically converge onto the optimal ad with **$O(\ln T)$ logarithmic regret**.
