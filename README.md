@@ -2,8 +2,8 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests: 36 Passed](https://img.shields.io/badge/Tests-36%2F36%20Passed-brightgreen.svg?style=flat&logo=pytest&logoColor=white)](tests/)
-[![Status: 100% Complete](https://img.shields.io/badge/Status-100%25%20Completed%20(Final%20Submission)-success.svg)](FINAL_PROJECT_REPORT.md)
+[![Tests: 42 Passed](https://img.shields.io/badge/Tests-42%2F42%20Passed-brightgreen.svg?style=flat&logo=pytest&logoColor=white)](tests/)
+[![Status: Submission Ready](https://img.shields.io/badge/Status-SUBMISSION%20READY-success.svg)](FINAL_QA_REPORT.md)
 [![UI: Streamlit](https://img.shields.io/badge/Dashboard-Streamlit%201.59-FF4B4B.svg?style=flat&logo=streamlit&logoColor=white)](dashboard/app.py)
 [![Code Style: Modular](https://img.shields.io/badge/Architecture-Clean%20%26%20Modular-blueviolet.svg)](src/)
 
@@ -497,6 +497,17 @@ The repository includes a dedicated 30-question oral examination preparation gui
    Garivier, A., & Moulines, E. (2011). *On upper-confidence bound policies for switching bandit problems*. In International Conference on Algorithmic Learning Theory (ALT '11), pp. 174-188.
 5. **Regret Lower Bounds:**  
    Lai, T. L., & Robbins, H. (1985). *Asymptotically efficient adaptive allocation rules*. Advances in Applied Mathematics, 6(1), 4-22.
+
+---
+
+## 13. Key Project Deliverables & Links
+
+* **Capstone Final Report:** [`FINAL_PROJECT_REPORT.md`](FINAL_PROJECT_REPORT.md) — Comprehensive academic research dissertation.
+* **Student & User Guide:** [`USER_GUIDE.md`](USER_GUIDE.md) — Step-by-step user handbook for running experiments and reading charts.
+* **Final QA Verification Report:** [`FINAL_QA_REPORT.md`](FINAL_QA_REPORT.md) — Complete end-to-end verification audit matrix.
+* **Demonstration Guide & Script:** [`DEMO_GUIDE.md`](DEMO_GUIDE.md) — Timed 8-to-12 minute viva presentation guide and checklist.
+* **Oral Viva Q&A (30 Questions):** [`VIVA_QUESTIONS.md`](VIVA_QUESTIONS.md) — Comprehensive oral examination handbook.
+* **Jupyter Research Notebook:** [`notebooks/01_dynamic_ad_rl_experiments.ipynb`](notebooks/01_dynamic_ad_rl_experiments.ipynb) — End-to-end experimental notebook.
 
 ---
 
