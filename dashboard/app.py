@@ -198,7 +198,7 @@ with tab1:
         st.markdown(f'<div class="metric-card"><div class="metric-lbl">Agent Favorite Choice</div><div class="metric-val">{metrics_ucb["agent_favorite_name"]} {badge}</div></div>', unsafe_allow_html=True)
 
     # Detailed Summary Table
-    st.dataframe(metrics_ucb["ad_summary_df"], use_container_width=True, hide_index=True)
+    st.dataframe(metrics_ucb["ad_summary_df"], width="stretch", hide_index=True)
 
     # Visualizations
     pcol1, pcol2 = st.columns(2)
@@ -210,7 +210,7 @@ with tab1:
         ax1.set_ylabel("Clicks")
         ax1.grid(True, linestyle="--", alpha=0.6)
         ax1.legend()
-        st.pyplot(fig1, use_container_width=True)
+        st.pyplot(fig1, width="stretch")
         plt.close(fig1)
 
     with pcol2:
@@ -221,7 +221,7 @@ with tab1:
         ax2.set_ylabel("Regret")
         ax2.grid(True, linestyle="--", alpha=0.6)
         ax2.legend()
-        st.pyplot(fig2, use_container_width=True)
+        st.pyplot(fig2, width="stretch")
         plt.close(fig2)
 
     pcol3, pcol4 = st.columns(2)
@@ -236,7 +236,7 @@ with tab1:
         ax3.set_title("Ad Selection Frequency (Exploitation Winner)", fontweight="bold", pad=8)
         ax3.set_ylabel("Impressions")
         ax3.grid(True, axis="y", linestyle="--", alpha=0.6)
-        st.pyplot(fig3, use_container_width=True)
+        st.pyplot(fig3, width="stretch")
         plt.close(fig3)
 
     with pcol4:
@@ -251,7 +251,7 @@ with tab1:
         ax4.set_ylabel("CTR")
         ax4.grid(True, axis="y", linestyle="--", alpha=0.6)
         ax4.legend()
-        st.pyplot(fig4, use_container_width=True)
+        st.pyplot(fig4, width="stretch")
         plt.close(fig4)
 
 
@@ -312,7 +312,7 @@ with tab2:
     with ak3:
         st.markdown(f'<div class="metric-card"><div class="metric-lbl">Lift vs Static A/B</div><div class="metric-val">+{improvement:.1f}% Clicks</div></div>', unsafe_allow_html=True)
 
-    st.dataframe(df_arena_lb, use_container_width=True, hide_index=True)
+    st.dataframe(df_arena_lb, width="stretch", hide_index=True)
 
     # Arena Comparison Graphs
     acol1, acol2 = st.columns(2)
@@ -325,7 +325,7 @@ with tab2:
         ax_r.set_ylabel("Regret")
         ax_r.grid(True, linestyle="--", alpha=0.6)
         ax_r.legend(fontsize=8)
-        st.pyplot(fig_r, use_container_width=True)
+        st.pyplot(fig_r, width="stretch")
         plt.close(fig_r)
 
     with acol2:
@@ -337,7 +337,7 @@ with tab2:
         ax_c.set_ylabel("Total Clicks")
         ax_c.grid(True, linestyle="--", alpha=0.6)
         ax_c.legend(fontsize=8)
-        st.pyplot(fig_c, use_container_width=True)
+        st.pyplot(fig_c, width="stretch")
         plt.close(fig_c)
 
 
@@ -393,7 +393,7 @@ with tab3:
             "Expected CTR": [f"{p*100:.1f}%" for p in probs],
             "Recommended": ["⭐ YES" if i == recommended_ad_idx else "No" for i in range(len(probs))],
         })
-        st.dataframe(affinity_df, use_container_width=True, hide_index=True)
+        st.dataframe(affinity_df, width="stretch", hide_index=True)
 
     st.markdown("---")
     st.markdown("#### 📈 10,000 Round Personalized Simulation Trajectory")
@@ -405,7 +405,7 @@ with tab3:
         ax_c1.set_xlabel("Round (t)")
         ax_c1.set_ylabel("Regret")
         ax_c1.grid(True, linestyle="--", alpha=0.6)
-        st.pyplot(fig_c1, use_container_width=True)
+        st.pyplot(fig_c1, width="stretch")
         plt.close(fig_c1)
 
     with cx_col2:
@@ -418,7 +418,7 @@ with tab3:
         ax_c2.set_ylabel("Impressions Served")
         ax_c2.tick_params(axis="x", rotation=15)
         ax_c2.grid(True, axis="y", linestyle="--", alpha=0.6)
-        st.pyplot(fig_c2, use_container_width=True)
+        st.pyplot(fig_c2, width="stretch")
         plt.close(fig_c2)
 
 
@@ -464,7 +464,7 @@ with tab4:
     ax_ns.set_ylabel("Cumulative Regret")
     ax_ns.grid(True, linestyle="--", alpha=0.6)
     ax_ns.legend()
-    st.pyplot(fig_ns, use_container_width=True)
+    st.pyplot(fig_ns, width="stretch")
     plt.close(fig_ns)
 
 
@@ -501,7 +501,7 @@ with tab5:
         {"Evaluated Policy": "Thompson Sampling (MAB)", "Accepted Replay Impressions": f"{ev_t['accepted_rounds']:,}", "Clicks Harvested": ev_t["total_clicks"], "Effective Offline CTR": f"{ev_t['effective_ctr']*100:.2f}%"},
         {"Evaluated Policy": "Contextual LinUCB", "Accepted Replay Impressions": f"{ev_l['accepted_rounds']:,}", "Clicks Harvested": ev_l["total_clicks"], "Effective Offline CTR": f"{ev_l['effective_ctr']*100:.2f}%"},
     ])
-    st.dataframe(off_summary, use_container_width=True, hide_index=True)
+    st.dataframe(off_summary, width="stretch", hide_index=True)
 
     fig_off, ax_off = plt.subplots(figsize=(9, 4))
     ax_off.plot(ev_u["running_ctr_history"], label="UCB1 Effective CTR", color="#1f77b4", linewidth=2)
@@ -512,7 +512,7 @@ with tab5:
     ax_off.set_ylabel("Running CTR")
     ax_off.grid(True, linestyle="--", alpha=0.6)
     ax_off.legend()
-    st.pyplot(fig_off, use_container_width=True)
+    st.pyplot(fig_off, width="stretch")
     plt.close(fig_off)
 
 
