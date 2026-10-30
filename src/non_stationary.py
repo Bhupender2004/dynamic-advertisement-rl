@@ -249,3 +249,4 @@ class SlidingWindowUCBAgent(BaseBanditAgent):
 
     def __repr__(self) -> str:
         return f"SlidingWindowUCBAgent(num_ads={self.num_ads}, window_size={self.window_size})"
+

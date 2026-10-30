@@ -200,3 +200,4 @@ class ContextualAdvertisementEnvironment:
             self.seed = seed
         self._rng = np.random.default_rng(self.seed)
         self.current_context = None
+

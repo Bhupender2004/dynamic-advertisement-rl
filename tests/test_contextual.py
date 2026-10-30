@@ -82,3 +82,4 @@ def test_run_contextual_simulation():
     assert "cumulative_regret" in df.columns
     assert df["cumulative_reward"].iloc[-1] >= 0
     assert df["cumulative_regret"].iloc[-1] >= 0
+

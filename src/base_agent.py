@@ -86,3 +86,4 @@ class BaseBanditAgent(ABC):
     def get_favorite_ad(self) -> int:
         """Return index of the ad with highest empirical estimated CTR."""
         return int(np.argmax(self.estimated_ctrs))
+

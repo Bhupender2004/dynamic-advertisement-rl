@@ -108,3 +108,4 @@ def test_thompson_sampling_convergence():
 
     # Arm 1 (CTR=0.50) should be selected much more than Arm 0 (CTR=0.05)
     assert agent.counts[1] > agent.counts[0]
+

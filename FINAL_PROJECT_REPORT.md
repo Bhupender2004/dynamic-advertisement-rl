@@ -272,3 +272,4 @@ Evaluating policies on $10,000$ historical impressions:
 3. Agrawal, S., & Goyal, N. (2012). *Analysis of Thompson sampling for the multi-armed bandit problem*. In Conference on Learning Theory (COLT '12), pp. 39-1.
 4. Garivier, A., & Moulines, E. (2011). *On upper-confidence bound policies for switching bandit problems*. In International Conference on Algorithmic Learning Theory (ALT '11), pp. 174-188.
 5. Lai, T. L., & Robbins, H. (1985). *Asymptotically efficient adaptive allocation rules*. Advances in Applied Mathematics, 6(1), 4-22.
+

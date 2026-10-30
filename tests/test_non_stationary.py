@@ -83,3 +83,4 @@ def test_non_stationary_simulation():
     assert "D-UCB" in results
     assert "SW-UCB" in results
     assert len(results["D-UCB"]) == 200
+
