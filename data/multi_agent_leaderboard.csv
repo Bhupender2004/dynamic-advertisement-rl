@@ -1,0 +1,6 @@
+Algorithm,Total Clicks,System CTR,Cumulative Regret
+Epsilon-Greedy (decay),1491,0.1491,10.22
+Thompson Sampling,1464,0.1464,31.77
+Epsilon-Greedy (eps=0.1),1429,0.1429,71.53
+UCB1,1126,0.1126,378.34
+Random / Static,806,0.0806,686.96

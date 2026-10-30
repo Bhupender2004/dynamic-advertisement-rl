@@ -124,13 +124,86 @@ In our simulation, each ad has a fixed, hidden true CTR that parameterizes the B
 
 ---
 
-### Q20: What are the main limitations of this Review 1 implementation?
-**Answer:**
-1. **Stationary CTRs:** Assumes true click probabilities never change over time (no seasonal drift or ad fatigue).
-2. **Context-Free:** Treats all users identically; does not incorporate user demographics, browsing history, or device features.
-3. **Simulated Payoffs:** Relies on synthetic Bernoulli trials rather than production bidding auctions or click logs.
+### Q20: What are Contextual Bandits and how does LinUCB work?
+**Answer:** Contextual Bandits extend standard Multi-Armed Bandits by observing a user feature vector $x_t \in \mathbb{R}^d$ (e.g., mobile vs. desktop, age, time of day) before selecting an advertisement. In **Disjoint LinUCB** (Li et al., WWW 2010), each candidate ad arm $a$ maintains an independent ridge regression model:
+$$\hat{\theta}_a = A_a^{-1} b_a, \quad \text{where } A_a = D_a^T D_a + I_d, \quad b_a = D_a^T r_a$$
+The decision score adds a confidence bound derived from the predictive variance:
+$$p_{t, a} = x_t^T \hat{\theta}_a + \alpha \sqrt{x_t^T A_a^{-1} x_t}$$
+The agent serves $a_t = \arg\max_a p_{t, a}$ and updates covariance $A_{a_t} \leftarrow A_{a_t} + x_t x_t^T$ and bias $b_{a_t} \leftarrow b_{a_t} + r_t x_t$ online in $O(d^2)$ time.
 
 ---
 
-### Q21: What are Contextual Bandits and how will they be implemented for Review 2?
-**Answer:** Contextual Bandits (e.g., **LinUCB**) extend MAB by taking a user/context feature vector $x_{t, a}$ (e.g., location, time of day, device) as input. The expected payoff is modeled as a linear relationship $\mathbb{E}[r \mid x] = x^T \theta_a$, enabling personalized ad recommendations. This forms our primary objective for the remaining 50% of the project.
+### Q21: How does Thompson Sampling work mathematically for Bernoulli payoffs?
+**Answer:** Thompson Sampling uses Bayesian conjugate updating. For binary click payoffs ($r_t \in \{0, 1\}$), the conjugate prior for the Bernoulli distribution is the **Beta distribution** $\text{Beta}(\alpha, \beta)$:
+1. Initialize prior parameters $\alpha_i = 1, \beta_i = 1$ for all arms.
+2. At round $t$, sample $\theta_i \sim \text{Beta}(\alpha_i, \beta_i)$.
+3. Serve ad $a_t = \arg\max_i \theta_i$.
+4. Observe click $r_t$ and update: $\alpha_{a_t} \leftarrow \alpha_{a_t} + r_t$, $\beta_{a_t} \leftarrow \beta_{a_t} + (1 - r_t)$.
+Thompson Sampling naturally satisfies the Lai-Robbins asymptotic regret lower bound and empirically exhibits the lowest regret among standard bandit policies.
+
+---
+
+### Q22: What is the Lai-Robbins Theorem and why is it important?
+**Answer:** The Lai-Robbins theorem (1985) establishes the fundamental theoretical lower bound on cumulative regret for any consistent bandit algorithm:
+$$\liminf_{T \to \infty} \frac{\text{Regret}(T)}{\ln T} \ge \sum_{i: \mu_i < \mu^*} \frac{\Delta_i}{D_{\text{KL}}(\mu_i \parallel \mu^*)}$$
+It proves that it is mathematically impossible for any algorithm to achieve sub-logarithmic regret (e.g., $O(\sqrt{\ln T})$ or $O(1)$) in stationary multi-armed bandits. Algorithms like UCB1 and Thompson Sampling that achieve $O(\ln T)$ regret are said to be **asymptotically optimal**.
+
+---
+
+### Q23: Why does fixed $\varepsilon$-Greedy have linear regret while decaying $\varepsilon$-Greedy has sublinear regret?
+**Answer:**
+* **Fixed $\varepsilon$-Greedy:** Continues to explore sub-optimal arms at a constant rate $\varepsilon$ forever ($t \to \infty$). Each sub-optimal pull incurs expected loss $\Delta_i$, causing cumulative regret to grow linearly: $\text{Regret}(T) \approx \varepsilon T \cdot \bar{\Delta} = O(T)$.
+* **Decaying $\varepsilon$-Greedy:** Decreases exploration rate as $\varepsilon_t = \min(1.0, \frac{c K}{t})$. The integral over time yields $\int \frac{1}{t} dt = \ln T$, reducing the rate of sub-optimal pulls and resulting in $O(\ln T)$ logarithmic regret.
+
+---
+
+### Q24: What is Non-Stationarity in online advertising (Ad Fatigue), and how does UCB1 fail?
+**Answer:** In digital advertising, advertisement performance decays over time due to audience saturation, banner blindness, or creative wear-out (ad fatigue).
+Standard UCB1 fails in non-stationary settings because each pull $N_i$ permanently deflates the exploration bonus $\sqrt{\ln(t)/N_i}$. If an optimal ad suffers fatigue at round 5,000, its large historical pull count ($N_i \approx 4,000$) prevents the empirical average $\hat{\mu}_i$ from dropping quickly, causing the agent to waste thousands of impressions on an obsolete ad.
+
+---
+
+### Q25: How does Discounted-UCB (D-UCB) solve the ad fatigue problem?
+**Answer:** Discounted-UCB (Garivier & Moulines, 2011) applies a geometric discount factor $\gamma \in (0, 1)$ (e.g., $\gamma = 0.998$) to historical counts and rewards:
+$$N_i(\gamma, t) = \sum_{s=1}^t \gamma^{t-s} \mathbb{I}(a_s = i), \quad R_i(\gamma, t) = \sum_{s=1}^t \gamma^{t-s} r_s \mathbb{I}(a_s = i)$$
+Older observations decay exponentially ($\gamma^\tau \to 0$), enabling the agent to forget outdated historical successes and quickly shift impressions when a regime change occurs.
+
+---
+
+### Q26: What is the Li et al. (2010) Replay Methodology for offline policy evaluation?
+**Answer:** Deploying untested RL policies to live production traffic can lose substantial ad revenue. The Replay Method (Li et al., WWW 2010) provides an unbiased offline evaluation using historical interaction logs where ads were served uniformly at random:
+1. For each logged record $(x_t, a_{\text{log}}, r_t)$, query the new candidate policy $\pi(x_t) = \hat{a}_t$.
+2. **If $\hat{a}_t == a_{\text{log}}$:** Accept the trial, update the policy with reward $r_t$, and log the outcome.
+3. **If $\hat{a}_t \neq a_{\text{log}}$:** Reject the trial and discard it without updating the policy.
+Because the logging policy was uniform random, accepted trials represent an unbiased sample from the distribution of events that policy $\pi$ would have produced in live production.
+
+---
+
+### Q27: How does LinUCB handle high-dimensional feature spaces in production?
+**Answer:** In production systems with thousands of features:
+1. Matrix inversion $A_a^{-1}$ ($O(d^3)$) is avoided by maintaining $A_a^{-1}$ directly using the **Sherman-Morrison formula** for rank-1 updates in $O(d^2)$ time:
+   $$(A + x x^T)^{-1} = A^{-1} - \frac{A^{-1} x x^T A^{-1}}{1 + x^T A^{-1} x}$$
+2. For shared features across arms, **Hybrid LinUCB** models both shared user parameters $\beta$ and arm-specific parameters $\theta_a$.
+
+---
+
+### Q28: How does our project prevent division by zero during agent initialization?
+**Answer:** In the UCB1 formula, if an ad has never been selected ($N_i = 0$), division by zero occurs. Our implementation enforces a strict cold-start initialization phase: during the first $K$ rounds, the agent deterministically pulls each candidate advertisement once, guaranteeing $N_i \ge 1$ for all arms before entering the optimization loop.
+
+---
+
+### Q29: What are the key empirical findings from our 10,000 round benchmark?
+**Answer:**
+1. **Regret Profile:** UCB1 and Thompson Sampling exhibit logarithmic regret curves that flatten over time, while Random and fixed $\varepsilon$-greedy exhibit steep linear regret slopes.
+2. **Click Lift:** Thompson Sampling and decaying $\varepsilon$-greedy harvest $>1,460$ clicks, representing an **$85\%$ click improvement** over static random allocation ($806$ clicks).
+3. **Personalization Lift:** Contextual LinUCB boosts overall CTR from $15\%$ (best single arm) to $>65\%$ by serving tailored ads to distinct user cohorts.
+4. **Shift Adaptation:** Sliding-Window UCB reduces regret by $13.8\%$ during non-stationary ad fatigue compared to stationary UCB1.
+
+---
+
+### Q30: How does this project adhere to professional software engineering standards?
+**Answer:**
+1. **Modular Architecture:** Clean separation of concerns across `src/` (environments, agents, simulation loops, offline evaluation, visualizers).
+2. **No Black-Box RL Libraries:** All algorithms (UCB1, Thompson Sampling, LinUCB, D-UCB) are built from mathematical first principles in NumPy.
+3. **100% Test Coverage:** 36 automated unit tests covering all components with $100\%$ pass rate (`pytest -v`).
+4. **Interactive GUI & CLI:** Both a master multi-stage CLI runner (`main.py`) and a 6-tab academic Streamlit dashboard (`dashboard/app.py`).

@@ -9,8 +9,10 @@ with exploitation of currently known high-performing advertisements.
 from typing import Optional
 import numpy as np
 
+from src.base_agent import BaseBanditAgent
 
-class UCB1Agent:
+
+class UCB1Agent(BaseBanditAgent):
     """
     UCB1 Reinforcement Learning Agent for Multi-Armed Bandits.
 
@@ -32,34 +34,20 @@ class UCB1Agent:
         current_round (int): Total number of time steps (rounds) completed.
     """
 
-    def __init__(self, num_ads: int, c: float = 2.0) -> None:
+    def __init__(self, num_ads: int, c: float = 2.0, name: str = "UCB1") -> None:
         """
         Initialize the UCB1 Agent.
 
         Args:
             num_ads: Number of advertisements (must be >= 1).
             c: Exploration parameter (must be > 0.0). Defaults to 2.0.
+            name: Human-readable algorithm name.
         """
-        if num_ads < 1:
-            raise ValueError(f"num_ads must be at least 1, got {num_ads}.")
         if c <= 0.0:
             raise ValueError(f"Exploration coefficient c must be positive, got {c}.")
 
-        self.num_ads: int = num_ads
+        super().__init__(num_ads=num_ads, name=name)
         self.c: float = float(c)
-
-        # Internal state tracking
-        self.counts: np.ndarray = np.zeros(num_ads, dtype=np.int64)
-        self.total_rewards: np.ndarray = np.zeros(num_ads, dtype=np.float64)
-        self.estimated_ctrs: np.ndarray = np.zeros(num_ads, dtype=np.float64)
-        self.current_round: int = 0
-
-    def reset(self) -> None:
-        """Reset the agent's memory and statistics to initial state."""
-        self.counts = np.zeros(self.num_ads, dtype=np.int64)
-        self.total_rewards = np.zeros(self.num_ads, dtype=np.float64)
-        self.estimated_ctrs = np.zeros(self.num_ads, dtype=np.float64)
-        self.current_round = 0
 
     def calculate_ucb(self, ad_index: int, total_rounds: Optional[int] = None) -> float:
         """
@@ -128,32 +116,6 @@ class UCB1Agent:
         # Select arm with maximum UCB value
         selected_ad = int(np.argmax(ucb_values))
         return selected_ad
-
-    def update(self, ad_index: int, reward: int) -> None:
-        """
-        Update the agent's statistical estimates after observing the feedback reward.
-
-        Args:
-            ad_index: Index of the advertisement that was pulled.
-            reward: Binary reward (1 for click, 0 for no click).
-        """
-        if not (0 <= ad_index < self.num_ads):
-            raise IndexError(
-                f"ad_index {ad_index} out of bounds for agent with {self.num_ads} ads."
-            )
-
-        self.current_round += 1
-        self.counts[ad_index] += 1
-        self.total_rewards[ad_index] += reward
-        self.estimated_ctrs[ad_index] = self.total_rewards[ad_index] / self.counts[ad_index]
-
-    def get_estimated_ctrs(self) -> np.ndarray:
-        """Return the current empirical CTR array."""
-        return self.estimated_ctrs.copy()
-
-    def get_selection_counts(self) -> np.ndarray:
-        """Return the current selection counts array."""
-        return self.counts.copy()
 
     def __repr__(self) -> str:
         return (
