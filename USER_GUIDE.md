@@ -105,3 +105,4 @@ Welcome to the **Dynamic Advertisement Selection Using Upper Confidence Bound Re
 * **Tab 4 (Non-Stationary Dynamics):** Click **`🔄 Run Non-Stationary Simulation`** to see how Discounted-UCB adapts when the best ad suffers ad fatigue at round 5,000.
 * **Tab 5 (Offline Replay Evaluation):** Click **`📊 Run Offline Replay Evaluation`** to test the algorithms on 10,000 historical impression records without live traffic.
 * **Tab 6 (Methodology & Viva Guide):** Read quick answers to common questions asked by academic examiners and project reviewers.
+
