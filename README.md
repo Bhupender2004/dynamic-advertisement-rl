@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests: 42 Passed](https://img.shields.io/badge/Tests-42%2F42%20Passed-brightgreen.svg?style=flat&logo=pytest&logoColor=white)](tests/)
-[![Status: Submission Ready](https://img.shields.io/badge/Status-SUBMISSION%20READY-success.svg)](FINAL_QA_REPORT.md)
+[![Status: Submission Ready](https://img.shields.io/badge/Status-SUBMISSION%20READY-success.svg)](#10-automated-verification--test-suite)
 [![UI: Streamlit](https://img.shields.io/badge/Dashboard-Streamlit%201.59-FF4B4B.svg?style=flat&logo=streamlit&logoColor=white)](dashboard/app.py)
 [![Code Style: Modular](https://img.shields.io/badge/Architecture-Clean%20%26%20Modular-blueviolet.svg)](src/)
 
@@ -298,23 +298,21 @@ dynamic-advertisement-rl/
 ├── notebooks/                            # Exploratory Data Analysis & Proofs
 │   └── 01_dynamic_ad_rl_experiments.ipynb# End-to-end interactive research notebook
 │
-├── tests/                                # Automated Unit Test Suite (36 Tests)
+├── tests/                                # Automated Test Suite (42 Tests, 100% Passing)
 │   ├── test_environment.py              # Bernoulli environment integrity tests
 │   ├── test_ucb_agent.py                 # UCB1 scores and cold-start tests
 │   ├── test_baseline_agents.py           # Thompson Sampling, ε-greedy tests
 │   ├── test_contextual.py                # LinUCB & contextual environment tests
 │   ├── test_non_stationary.py            # D-UCB, SW-UCB, and shift tests
 │   ├── test_simulation.py                # Closed-loop trajectory monotonicity tests
-│   └── test_multi_agent.py               # Arena runner & offline replay tests
+│   ├── test_multi_agent.py               # Arena runner & offline replay tests
+│   └── test_ui_interaction.py            # Streamlit AppTest UI interaction tests
 │
 ├── main.py                               # Master CLI benchmark pipeline runner
 ├── requirements.txt                      # Project dependencies
 ├── pytest.ini                            # Test configuration
-├── FINAL_PROJECT_REPORT.md               # Publication-grade capstone dissertation
-├── DEMO_GUIDE.md                         # Presentation script & demonstration checklist
-├── VIVA_QUESTIONS.md                     # 30 oral examination questions & answers
 ├── LICENSE                               # MIT License
-└── README.md                             # Project documentation
+└── README.md                             # Comprehensive project documentation
 ```
 
 ---
@@ -472,7 +470,7 @@ tests/test_ucb_agent.py::test_agent_reset PASSED                                
 
 ## 11. Academic Defense & Viva Q&A Highlights
 
-The repository includes a dedicated 30-question oral examination preparation guide in [`VIVA_QUESTIONS.md`](VIVA_QUESTIONS.md). Core sample questions:
+The interactive research dashboard includes an integrated 30-question oral examination preparation guide (**Tab 6: Methodology & Viva Guide**). Core sample questions:
 
 * **Q: What is the fundamental difference between an MDP and a Multi-Armed Bandit?**  
   *A:* Standard MDPs involve state transitions ($s \to s'$) where current actions dictate future states. Bandits are non-associative, single-state RL problems where each round is an independent trial with immediate reward feedback.
@@ -500,14 +498,13 @@ The repository includes a dedicated 30-question oral examination preparation gui
 
 ---
 
-## 13. Key Project Deliverables & Links
+## 13. Key Project Components & Navigation
 
-* **Capstone Final Report:** [`FINAL_PROJECT_REPORT.md`](FINAL_PROJECT_REPORT.md) — Comprehensive academic research dissertation.
-* **Student & User Guide:** [`USER_GUIDE.md`](USER_GUIDE.md) — Step-by-step user handbook for running experiments and reading charts.
-* **Final QA Verification Report:** [`FINAL_QA_REPORT.md`](FINAL_QA_REPORT.md) — Complete end-to-end verification audit matrix.
-* **Demonstration Guide & Script:** [`DEMO_GUIDE.md`](DEMO_GUIDE.md) — Timed 8-to-12 minute viva presentation guide and checklist.
-* **Oral Viva Q&A (30 Questions):** [`VIVA_QUESTIONS.md`](VIVA_QUESTIONS.md) — Comprehensive oral examination handbook.
-* **Jupyter Research Notebook:** [`notebooks/01_dynamic_ad_rl_experiments.ipynb`](notebooks/01_dynamic_ad_rl_experiments.ipynb) — End-to-end experimental notebook.
+* **Master CLI Pipeline:** [`main.py`](main.py) — Complete 5-stage benchmark execution pipeline.
+* **Interactive Dashboard:** [`dashboard/app.py`](dashboard/app.py) — 6-tab Streamlit research environment.
+* **Automated Test Suite:** [`tests/`](tests/) — 42 test cases across 8 test suites (100% passing).
+* **Core Algorithm Implementations:** [`src/`](src/) — Pure NumPy implementations of UCB1, LinUCB, D-UCB, SW-UCB, and baselines.
+* **Jupyter Research Notebook:** [`notebooks/01_dynamic_ad_rl_experiments.ipynb`](notebooks/01_dynamic_ad_rl_experiments.ipynb) — End-to-end research notebook.
 
 ---
 
